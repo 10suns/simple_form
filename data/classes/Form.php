@@ -6,24 +6,25 @@
  * and open the template in the editor.
  */
 
-namespace simpleForm;
-
+namespace DataClasses;
 use Respect\Validation\Validator as v;
 
 abstract class Form
 {
     public $model = null;
 
+    public $validate = array();
+
     /*
      * field_name =>
-     *      rule1 =>
-     *          optional => true|false
-     *          message => 'error message' (use default value if is not set)
-     *          arguments => array()
+     *      optional => true|false
+     *      rules =>
+     *          rule1 =>
+     *              name => 'name of rule'
+     *              arguments => array()
+     *              message => 'error message' (use default value if is not set)
      */
     public $validation_rules = array();
-    public $validation = array();
-
 
     public function __construct() {
         $this->csrf_token = $this->generate_token();
@@ -56,16 +57,19 @@ abstract class Form
 
     protected function validate() {
         $data = filter_input(INPUT_POST, $this->model);
-        foreach($this->validation_rules as $field => $rule){
-            if ($rule['optional']){
-
+        $error = false;
+        foreach($this->validation_rules as $field => $config){
+            $validator = new v;
+            $validator->addRules($config['rules']);
+            if ($config['optional']){
+                $this->validate[$field] = v::optional($validator);
+            } else {
+                $this->validate[$field] = $validator;
             }
+            $error = $this->validate[$field]->validate($data[$field]);
         }
-    }
 
-    protected function parseRule() {
-        $data = filter_input(INPUT_POST, $this->model);
-
+        return $error;
     }
 
     protected function generate_token() {

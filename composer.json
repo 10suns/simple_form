@@ -33,7 +33,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Respect\\Validation\\": "library/"
+            "Respect\\Validation\\": "library/",
+            "DataClasses\\": "data/classes"
         }
     },
     "autoload-dev": {

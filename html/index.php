@@ -1,6 +1,8 @@
 <?php
-require '../vendor/autoload.php';
-use \Respect\Validation\Validator as v;
+require '../autoload.php';
 
-$usernameValidator = v::alnum()->noWhitespace()->length(1, 15);
-var_dump($usernameValidator->validate('alganet'));
+use \DataClasses\Form;
+
+class SampleForm extends Form {
+    public $model = 'test';
+}
